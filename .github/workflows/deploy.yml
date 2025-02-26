@@ -14,10 +14,15 @@ jobs:
     if: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: "recursive"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: "20"
       - name: Install dependencies
@@ -42,7 +47,7 @@ jobs:
       - name: Purge Cloudflare Cache
         if: github.event_name == 'push' && github.ref_name == 'main'
         id: purge-cache
-        uses: NathanVaughn/actions-cloudflare-purge@v3.1.0
+        uses: NathanVaughn/actions-cloudflare-purge@db8c58f61ba4c3ec77229c8fa14ddebb3b59932f # v3.1.0
         with:
           cf_auth: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cf_zone: ${{ secrets.CLOUDFLARE_ZONE_ID }}
